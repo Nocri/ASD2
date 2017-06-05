@@ -114,10 +114,14 @@ int main() {
 
 		int currentStoppedX = krawedzie[currentEdge]->x;
 
-		std::cout << "x stopped at: " << currentStoppedX /*<< "\n"*/;
+		//std::cout << " lastBroomPos = " << lastBroomPosition << "\nx stopped at: " << currentStoppedX /*<< "\n"*/;
+
+		if (highestRoof != NULL) {
+			highestRoof->opad += (currentStoppedX - lastBroomPosition);
+		}
 
 		if (krawedzie[currentEdge]->isFirst) {//Je¿eli krawêdŸ siê zaczyna
-			std::cout << " first \n";
+			//std::cout << " first \n";
 			activeRoofs.push_back(krawedzie[currentEdge]->dach);	//Dodajemy j¹ do zliczanych
 
 			if (highestRoof == NULL || krawedzie[currentEdge]->dach->fX(currentStoppedX) > highestRoof->fX(currentStoppedX)) {		//tak: zmieniamy najwy¿szy dach
@@ -126,51 +130,58 @@ int main() {
 
 			//OPADANIE KRAWÊDZI ROSN¥CEJ
 			if (krawedzie[currentEdge]->dach->kA->y < krawedzie[currentEdge]->dach->kB->y) {
-				std::cout << "krawedz dachu " << krawedzie[currentEdge]->dach->id <<" jest opadajaca na ";
+				//std::cout << "krawedz dachu " << krawedzie[currentEdge]->dach->id <<" jest opadajaca na ";
 				int tHighestY = 0;
 				Dach* tHighest = NULL;
-				for (int a = 0; a < activeRoofs.size(); a++) {
-					if (activeRoofs[a]->fX(currentStoppedX) > tHighestY && activeRoofs[a] != highestRoof) {
-						tHighest = activeRoofs[a];
+				for (int a = 0; a < dachy.size(); a++) {
+					if ((dachy[a]->kA->x <= currentStoppedX && dachy[a]->kB->x >= currentStoppedX) &&	//Je¿eli dach mieœci siê w zakresie
+						dachy[a]->fX(currentStoppedX) > tHighestY && dachy[a] != highestRoof && dachy[a] != krawedzie[currentEdge]->dach) {
+						tHighest = dachy[a];
+						tHighestY = dachy[a]->fX(currentStoppedX);
 					}
 				}
 				if (tHighest != NULL) {
 					tHighest->opadajace.push_back(krawedzie[currentEdge]->dach);
-					std::cout << tHighest->id << "\n";
+					//std::cout << tHighest->id << "\n";
 				}
 				else
 				{
-					std::cout << "nic \n";
+					//std::cout << "nic \n";
 				}
 
 			}
 
 		}
 		else { //Je¿eli krawêdŸ siê koñczy
-			std::cout << " second \n";
+			//std::cout << " second \n";
 			for (int r = 0; r < activeRoofs.size(); r++) {		//	usuwany j¹ ze zliczanych
 					if (activeRoofs[r]->kB == krawedzie[currentEdge]) {
 						activeRoofs.erase(activeRoofs.begin() + r);
 					}
 				}
 
-			//OPADANIE KRAWÊDZI ROSN¥CEJ
+			//OPADANIE KRAWÊDZI MALEJ¥CEJ
 			if (krawedzie[currentEdge]->dach->kA->y > krawedzie[currentEdge]->dach->kB->y) {
-				std::cout << "krawedz dachu " << krawedzie[currentEdge]->dach->id << " jest opadajaca na ";
+				//std::cout << "krawedz dachu " << krawedzie[currentEdge]->dach->id << " jest opadajaca na ";
 				int tHighestY = 0;
 				Dach* tHighest = NULL;
-				for (int a = 0; a < activeRoofs.size(); a++) {
-					if (activeRoofs[a]->fX(currentStoppedX) > tHighestY && activeRoofs[a] != highestRoof) {
-						tHighest = activeRoofs[a];
+				for (int a = 0; a < dachy.size(); a++) {
+					//std::cout << " miesci siê w zakresie " << (dachy[a]->kA->x <= currentStoppedX && dachy[a]->kB->x >= currentStoppedX);
+					//std::cout << " dachy[a]->fX(currentStoppedX) > tHighestY " << dachy[a]->fX(currentStoppedX) << " > " << tHighestY
+					//	<< " dachy[a] id = " << dachy[a]->id << " highest id = " << highestRoof->id << " dachy[a] id = " << dachy[a]->id << " krawedzie[currentEdge]->dach id " << krawedzie[currentEdge]->dach->id << " \n";
+					if ( (dachy[a]->kA->x <= currentStoppedX && dachy[a]->kB->x >= currentStoppedX) &&	//Je¿eli mieœci siê w zakresie
+						dachy[a]->fX(currentStoppedX) > tHighestY && dachy[a] != highestRoof && dachy[a] != krawedzie[currentEdge]->dach) {
+						tHighest = dachy[a];
+						tHighestY = dachy[a]->fX(currentStoppedX);
 					}
 				}
 				if (tHighest != NULL) {
 					tHighest->opadajace.push_back(krawedzie[currentEdge]->dach);
-					std::cout << tHighest->id << "\n";
+					//std::cout << tHighest->id << "\n";
 				}
 				else
 				{
-					std::cout << "nic \n";
+					//std::cout << "nic \n";
 				}
 
 			}
@@ -190,15 +201,17 @@ int main() {
 		//		std::cout << "aktywny dach " << activeRoofs[r]->id << "\n";
 		//}
 		if (highestRoof != NULL) {
-			std::cout << "highest " << highestRoof->id << "\n";
+			//std::cout << "highest " << highestRoof->id << "\n";
 		}
 		else
 		{
-			std::cout << "highest is NULL";
+			//std::cout << "highest is NULL";
 		}
 
-
+		lastBroomPosition = krawedzie[currentEdge]->x;
 		currentEdge++;
+
+		//std::cout << "\n";
 
 		//std::cout << "x " << krawedzie[currentEdge]->x << " y " << krawedzie[currentEdge]->y << " isFirst " << krawedzie[currentEdge]->isFirst << "\n";
 
@@ -260,8 +273,22 @@ int main() {
 	}
 
 	for (Dach* dach : dachy) {
-		std::cout << "dach id: " << dach->id << "pierwsza: x " << dach->kA->x << " y " << dach->kA->y << " druga x " << dach->kB->x << " y " << dach->kB->y 
-			<< " opad: " << dach->opad << " \n";
+		/*std::cout << "dach id: " << dach->id << "pierwsza: x " << dach->kA->x << " y " << dach->kA->y << " druga x " << dach->kB->x << " y " << dach->kB->y
+			<< " opad: " << dach->opad << " ";*/
+		for (int o = 0; o < dach->opadajace.size(); o++) {
+			//std::cout << dach->opadajace[o]->id << " ";
+			dach->opad += dach->opadajace[o]->opad;
+		}
+
+		//std::cout << "dach id: " << dach->id << "pierwsza: x " << dach->kA->x << " y " << dach->kA->y << " druga x " << dach->kB->x << " y " << dach->kB->y
+		//	<< " opad: " << dach->opad << " ";
+
+		//for (int o = 0; o < dach->opadajace.size(); o++) {
+		//	std::cout << dach->opadajace[o]->id << " ";
+		//	//dach->opad += dach->opadajace[o]->opad;
+		//}
+		std::cout << dach->opad;
+		std::cout << "\n";
 	}
 
 }
